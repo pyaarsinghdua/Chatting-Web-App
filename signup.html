@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="css/style.css"> -->
+    <title>My Chat</title>
+</head>
+<style type="text/css">
+    @font-face {
+        font-family: HeadFont;
+        src: url(ui/fonts/Summer-Vibes-OTF.otf);
+    }
+
+    @font-face {
+        font-family: myFont;
+        src: url(ui/fonts/OpenSans-Regular.ttf);
+    }
+
+    #wrapper {
+        max-width: 900px;
+        min-height: 500px;
+        /* display: flex; */
+        margin: auto;
+        color: rgb(0, 0, 0);
+        font-size: 13px;
+        font-family: myFont;
+        /* margin-top: 150px; */
+        padding-top: 150px;
+        border-color: 2px solid green;
+
+    }
+
+    form {
+        margin: auto;
+        /* background-color: gray; */
+        padding: 10px;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    input[type=text],
+    input[type=password],
+    input[type=submit] {
+        padding: 10px;
+        margin: 10px;
+        width: 98%;
+        border-radius: 5px;
+        border: solid thin green;
+    }
+
+    input[type=submit] {
+        width: 103%;
+        cursor: pointer;
+    }
+
+    input[type=radio] {
+        transform: scale(1.2);
+        cursor: pointer;
+        z-index: -1;
+    }
+
+    #header {
+        background-color: #ffffff;
+        font-family: HeadFont;
+        color: rgb(172, 75, 75);
+        text-align: center;
+        border: 2px solid red;
+        border-radius: 20px;
+        width: 98%;
+        /* background-image: url("ui/images/background/back.jpg"); */
+
+        position: fixed;
+
+        z-index: 2;
+    }
+</style>
+
+<body style="background-color: salmon;">
+    <div id="header">
+        <h1>My Chat</h1>
+        <h3>Sign Up</h3>
+    </div>
+    <div id="wrapper">
+        <div id="error" style="text-align: center; padding: 0.5em; color: yellow; font-size: 17px; display: none;">
+        </div>
+        <form id="signup_form">
+            <input id="username_id" type="text" name="username" placeholder="Username"> <br>
+            <input id="email_id" type="text" name="email" placeholder="Email"> <br>
+            <div style="padding: 10px;">
+                <br>Gender: <br>
+                <input type="radio" id="male_id" value="Male" name="gender">Male <br>
+                <input type="radio" id="female_id" value="Female" name="gender">Female <br>
+            </div>
+            <input type="password" id="password_id" name="password" placeholder="Password"> <br>
+            <input type="password" id="password1_id" name="password2" placeholder="Retype Password"> <br>
+            <input type="submit" onclick="collect_data(); return false;" value="Sign Up" id="signup_button"> <br>
+        </form>
+
+        <a href="login.html" style="display: block; text-decoration:none; text-align: center;">
+        Already Have an account? Login Here!
+        </a>
+    </div>
+</body>
+
+</html>
+<script type="text/javascript">
+
+    var signup_button = _("signup_button");
+
+    function _(element) {
+        return document.getElementById(element);
+    }
+
+    function collect_data() {
+
+        signup_button.disabled = true;
+        signup_button.value = "Loading..... Please wait";
+
+        // var signupForm = _("signup_form");
+        // var inputs = signupForm.getElementsByTagName("INPUT");
+
+        var data = {};
+
+        var male = _("male_id");
+        var female = _("female_id");
+
+        data.username = _("username_id").value;
+        data.email = _("email_id").value;
+        data.password = _("password_id").value;
+        data.password1 = _("password1_id").value;
+        if (male.checked) {
+            data.gender = male.value;
+        }
+        if (female.checked) {
+            data.gender = female.value;
+        }
+
+        send_data(data, "signup");
+
+
+    }
+
+    function send_data(data, type) {
+
+        var xml = new XMLHttpRequest();
+
+        xml.onload = function () {
+
+            if (xml.readyState == 4 || xml.status == 200) {
+                handle_result(xml.responseText);  //echo'ed data is retured in xml.responseText
+                signup_button.disabled = false;
+                signup_button.value = "Sign Up";
+            }
+
+        }
+        data.data_type = type;
+        var data_string = JSON.stringify(data)
+        xml.open("POST", "api.php", true);
+        xml.send(data_string);
+
+    }
+
+    function handle_result(result) {
+        var data = JSON.parse(result);
+
+        // alert(data.data_type);
+
+        if(data.data_type == "info"){
+            window.location = "index.html";
+        }else{
+            var error = _("error");
+            error.innerHTML = data.message;
+            error.style.display = "block";
+        }
+    }
+
+</script>

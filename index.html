@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="css/style.css"> -->
+    <title>My Chat</title>
+</head>
+<style type="text/css">
+    @font-face {
+        font-family: HeadFont;
+        src: url(ui/fonts/Summer-Vibes-OTF.otf);
+    }
+
+    @font-face {
+        font-family: myFont;
+        src: url(ui/fonts/OpenSans-Regular.ttf);
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+        outline: none;
+    }
+
+    #wrapper {
+        max-width: 900px;
+        min-height: 500px;
+        display: flex;
+        margin: auto;
+        color: white;
+        font-size: 13px;
+    }
+
+    #left_pannel {
+        min-height: 500px;
+        background-color: #27344b;
+        flex: 1;
+        text-align: center;
+        /* padding: 10px; */
+    }
+
+    #profile_image {
+        width: 50%;
+        border: solid thin white;
+        border-radius: 50%;
+        margin: 10px;
+    }
+
+    #left_pannel label {
+        width: 100%;
+        height: 20px;
+        display: block;
+        background-color: #404b56;
+        border-bottom: solid thin #bebe69;
+        cursor: pointer;
+        padding: 5px;
+
+        transition: all 1s ease;
+
+    }
+
+    #left_pannel label:hover {
+        background-color: #778593;
+    }
+
+    #left_pannel label img {
+        float: right;
+        width: 25px;
+
+    }
+
+    #right_pannel {
+        min-height: 500px;
+        /* background-color: green; */
+        flex: 4;
+        text-align: center;
+    }
+
+    #header {
+        background-color: #485b6c;
+        height: 70px;
+        font-size: 40px;
+        text-align: center;
+        font-family: HeadFont;
+    }
+
+    #inner_left_pannel {
+        background-color: #383e48;
+        flex: 1;
+        min-height: 430px;
+        max-height: 440;
+    }
+
+
+    #inner_right_pannel {
+        background-color: #f2f7f8;
+        flex: 0;
+        transition: all 1s ease;
+        max-height: 440;
+        /* min-height: 430px; */
+    }
+
+    #radio_chat:checked~#inner_right_pannel {
+        flex: 2;
+    }
+
+
+    #wrapper {
+        font-family: myFont;
+    }
+
+    #contact {
+        width: 150px;
+        height: 120px;
+        margin: 10px;
+        display: inline-block;
+        vertical-align: top;
+
+        /* overflow: hidden; */
+    }
+
+    #contact img {
+        width: 100px;
+        height: 100px;
+        border-radius: 40px;
+    }
+
+    .loader_on {
+        position: absolute;
+        margin-left: 20px;
+    }
+
+    .loader_off {
+        display: none;
+    }
+
+    #active_contact {
+        height: 70px;
+        margin: 10px;
+        border: solid thin white;
+        padding: 5px;
+        background-color: rgb(255, 255, 255);
+        color: black;
+    }
+
+    #active_contact img {
+        width: 70px;
+        height: 70px;
+        float: left;
+        margin: 2px;
+    }
+
+    #message_left {
+        min-height: 40px;
+        min-width: 60%;
+        margin: 10px;
+        padding: 5px;
+        background-color: rgb(175, 231, 181);
+        color: black;
+        float: left;
+        box-shadow: 0px 0px 10px #aaa;
+        border-bottom-left-radius: 30%;
+        position: relative;
+        max-width: 90%;
+    }
+
+    #message_left img {
+        width: 35px;
+        height: 35px;
+        float: left;
+        margin: 2px;
+        border-radius: 50%;
+    }
+
+    #message_left div {
+        width: 10px;
+        height: 10px;
+        background-color: rgb(175, 231, 181);
+        border-radius: 50%;
+        position: absolute;
+        left: -5px;
+        top: 0px;
+    }
+
+
+    #message_right {
+        min-height: 40px;
+        min-width: 60%;
+        margin: 10px;
+        padding: 5px;
+        background-color: rgb(231, 170, 170);
+        color: black;
+        float: right;
+        box-shadow: 0px 0px 10px #aaa;
+        border-bottom-right-radius: 30%;
+        position: relative;
+        max-width: 90%;
+    }
+
+    #message_right img {
+        width: 35px;
+        height: 35px;
+        float: right;
+        margin: 2px;
+        border-radius: 50%;
+    }
+
+    #message_right div {
+        width: 10px;
+        height: 10px;
+        background-color: rgb(231, 170, 170);
+        border-radius: 50%;
+        float: right;
+        position: absolute;
+        right: -5px;
+        top: 0px;
+    }
+</style>
+
+<body style="background-color: black;">
+    <div id="wrapper">
+
+        <div id="left_pannel">
+            <div id="user_info" style="padding: 10px;">
+                <img id="profile_image" src="ui/images/user_male.png" style="width: 100px; height: 100px;">
+                <br>
+                <span id="username">Username </span>
+                <br>
+                <span id="email" style="font-size: 12px;opacity: 0.5;">
+                    email@gmail.com
+                </span>
+
+                <br><br><br>
+                <div>
+                    <label id="label_chat" for="radio_chat" onclick="getchat();">Chat<img
+                            src="ui/icons/chat.png"></label>
+                    <label id="label_contacts" for="radio_contacts" onclick="getcontacts();">Contacts<img
+                            src="ui/icons/contacts.png"></label>
+                    <label id="label_settings" for="radio_settings" onclick="getsettings();">Settings<img
+                            src="ui/icons/settings.png"></label>
+                    <label id="label_logout" for="radio_logout" onclick="logout_user(); return false;">LogOut<img
+                            src="ui/icons/logout.png" style="background-color: white; border-radius: 5px;"></label>
+                </div>
+
+            </div>
+        </div>
+        <div id="right_pannel">
+            <div id="header">
+                <div class="loader_on" id="loader_holder">
+                    <img src="ui/images/loading.gif" style="width: 94px;">
+                </div>
+                My Chat
+            </div>
+            <div id="container" style="display: flex;">
+                <div id="inner_left_pannel">
+
+
+                </div>
+                <input type="radio" id="radio_chat" name="myradio" style="display: none;">
+                <input type="radio" id="radio_contacts" name="myradio" style="display: none;" checked>
+                <input type="radio" id="radio_settings" name="myradio" style="display: none;">
+                <div id="inner_right_pannel"></div>
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+
+<script type="text/javascript">
+
+    var message_holder;
+
+    var CURRENT_CHAT_USER = "";   //global variable for chatting user
+
+    function _(element) {
+        return document.getElementById(element);
+    }
+    // inner_pannel.innerHTML="this is some data";
+
+    function get_data(find, type) {
+
+        var loader_holder = _("loader_holder");     //processing gif
+
+        //create xml request
+        var xml = new XMLHttpRequest();
+
+        loader_holder.className = "loader_on";
+
+        xml.onload = function () {
+            if (xml.readyState == 4 || xml.status == 200) {
+                handle_result(xml.responseText, type);
+                loader_holder.className = "loader_off";
+            }
+        }
+
+        data = {};
+        data.find = find;
+        data.data_type = type;
+
+        data = JSON.stringify(data);
+        xml.open("POST", "api.php", true);
+        xml.send(data, type);
+    }
+
+    function handle_result(result, type) {
+        var inner_right_pannel = _("inner_right_pannel");
+        // console.log(result);
+
+
+        if (result.trim() != "") {
+            var obj = JSON.parse(result);
+            if (typeof (obj.logged_in) != "undefined" && !obj.logged_in) {
+                window.location = "login.html";
+            } else {
+                // console.log(obj.data_type);
+                switch (obj.data_type) {
+                    case "user_info":
+                        var username = _("username");
+                        var email = _("email");
+                        var profile_image = _("profile_image");
+                        username.innerHTML = obj.username;
+                        email.innerHTML = obj.email;
+                        profile_image.src = obj.image;
+                        stoptimmer();
+                        break;
+
+                    case "contacts":
+                        var inner_left_pannel = _("inner_left_pannel");
+
+                        inner_left_pannel.innerHTML = obj.message;
+
+                        inner_right_pannel.innerHTML = "";
+                        stoptimmer();
+
+                        break;
+
+                    case "chats":
+                        var inner_left_pannel = _("inner_left_pannel");
+
+                        inner_left_pannel.innerHTML = obj.user;
+                        inner_right_pannel.innerHTML = obj.messages;
+
+                        message_holder = _("message_holder");
+                        message_holder.scrollTo(0, message_holder.scrollHeight);
+
+                        var message_text_box = _("message_text");
+                        message_text_box.focus();
+
+                        starttimmer();
+
+                        break;
+
+                    case "settings":
+                        var inner_left_pannel = _("inner_left_pannel");
+
+                        inner_left_pannel.innerHTML = obj.message;
+
+                        inner_right_pannel.innerHTML = "";
+                        stoptimmer();
+
+                        break;
+
+                    case "save_settings":
+                        alert(obj.message);
+                        get_data({}, "user_info");
+                        getsettings(true);
+                        stoptimmer();
+                        break;
+
+                    case "send_message":
+                        // alert(obj.messages);
+                        get_data({ id: CURRENT_CHAT_USER }, "chats");
+
+                        var message_text_box = _("message_text");
+                        message_text_box.focus();
+                        break;
+
+                    case "chats_refresh":
+
+
+                        message_holder.innerHTML = obj.messages;
+
+                        message_holder.scrollTo(0, message_holder.scrollHeight);
+
+                        // var message_text_box = _("message_text");
+                        // message_text_box.focus();
+
+                        // starttimmer();
+                        break;
+
+                    case "send_file":
+                        alert(obj.message);
+                        break;
+                }
+            }
+        }
+    }
+
+    function logout_user() {
+        var answer = confirm("LogOut?");
+        if (answer) {
+            get_data({}, "logout");
+        }
+    }
+
+    function getcontacts(e) {
+        get_data({}, "contacts");
+    }
+
+    function getchat(e) {
+        // console.log(CURRENT_CHAT_USER);
+        if (CURRENT_CHAT_USER != "") {
+            get_data({ id: CURRENT_CHAT_USER }, "chats");
+        } else {
+            get_data({}, "chats");
+        }
+    }
+
+    function getsettings(e) {
+        get_data({}, "settings");
+    }
+
+    get_data({}, "user_info");
+    get_data({}, "contacts");
+    get_data({}, "first_login");
+
+
+    function collect_data() {
+
+        var signup_button = _("save_settings_button");
+
+        signup_button.disabled = true;
+        signup_button.value = "Loading..... Please wait";
+
+        // var signupForm = _("signup_form");
+        // var inputs = signupForm.getElementsByTagName("INPUT");
+
+        var data = {};
+
+        var male = _("male_id");
+        var female = _("female_id");
+
+        data.username = _("username_id").value;
+        data.email = _("email_id").value;
+        data.password = _("password_id").value;
+        data.password1 = _("password1_id").value;
+        if (male.checked) {
+            data.gender = male.value;
+        }
+        if (female.checked) {
+            data.gender = female.value;
+        }
+
+        send_data(data, "save_settings");
+
+
+    }
+
+    function send_data(data, type) {
+
+        var xml = new XMLHttpRequest();
+
+        xml.onload = function () {
+
+            if (xml.readyState == 4 || xml.status == 200) {
+                handle_result(xml.responseText);  //echoed data is retured in xml.responseText
+
+                var signup_button = _("save_settings_button");
+
+                signup_button.disabled = false;
+                signup_button.value = "Save";
+            }
+
+        }
+        data.data_type = type;
+        var data_string = JSON.stringify(data);
+        // alert(data_string);
+        xml.open("POST", "api.php", true);
+        xml.send(data_string);
+
+    }
+
+    function upload_profile_image(files) {
+
+        var change_image_button = _("change_image_button");
+        change_image_button.disabled = true;
+        change_image_button.innerHTML = "Uploading Image...";
+
+        var myform = new FormData();
+
+        var xml = new XMLHttpRequest();
+
+        xml.onload = function () {
+
+            if (xml.readyState == 4 || xml.status == 200) {
+                // alert(xml.responseText);  //echoed data is retured in xml.responseText
+
+                get_data({}, "user_info");
+                getsettings(true);
+
+                change_image_button.disabled = false;
+                change_image_button.innerHTML = "Change Image";
+            }
+
+        }
+
+        // alert(files[0].type);
+
+        myform.append("data_type", "change_profile_image");
+        myform.append("file", files[0]);
+
+        xml.open("POST", "image_uploader.php", true);
+        xml.send(myform);       //$_FILES varibale has file name and data_type,etc. and $_POST variable has form.datatype
+    }
+
+    function handle_drag_picture(e) {
+        // console.log(e.type);
+        if (e.type == "dragover") {
+            e.preventDefault();     //to prevent opening the image in the browser
+            e.target.className = "dragging";
+        } else if (e.type == "drop") {
+            e.preventDefault();
+            e.target.className = "";
+
+            //processing flie droped
+            upload_profile_image(e.dataTransfer.files);
+        } else {
+            e.preventDefault();
+            e.target.className = "";
+        }
+    }
+
+    function start_chat(e) {
+
+        var id = e.target.getAttribute("userid");
+        //to get user defined attribute's value use getAttribute("attribute_name")
+
+        if (e.target.id == "") {
+            id = e.target.parentNode.getAttribute("userid");
+        }
+        // console.log(id);
+
+        CURRENT_CHAT_USER = id;
+
+        var radio_chat = _("radio_chat");
+        radio_chat.checked = true;
+        get_data({ id: CURRENT_CHAT_USER }, "chats");
+    }
+
+    function send_message(e) {
+
+        var message_text = _("message_text");
+        // alert(message_text.value);
+        if (message_text.value.trim() == "") {
+            alert("please type something");
+            return;
+        }
+        get_data({
+
+            message: message_text.value.trim(),
+            id: CURRENT_CHAT_USER
+
+        }, "send_message");
+    }
+
+    //to send message on enter pressed
+    function enter_pressed(e) {
+        if (e.keyCode == 13) {
+            send_message(e);
+        }
+    }
+
+    var myinterval = setInterval(function () {
+        if (CURRENT_CHAT_USER != "") {
+            // console.log("hello");
+            get_data({ id: CURRENT_CHAT_USER }, "chats_refresh");
+        }
+    }, 5000);
+
+    function stoptimmer() {
+        clearInterval(myinterval);
+    }
+
+    function starttimmer() {
+        myinterval = setInterval(function () {
+            if (CURRENT_CHAT_USER != "") {
+                // console.log("hello");
+                get_data({ id: CURRENT_CHAT_USER }, "chats_refresh");
+            }
+        }, 5000);
+    }
+
+    function send_file(files) {
+        var file = files[0];
+        var type = "send_file";
+
+        var answer = confirm("send " + file.name + " ?");
+        if (answer) {
+
+            var myform = new FormData();
+
+            var xml = new XMLHttpRequest();
+
+            xml.onload = function () {
+
+                if (xml.readyState == 4 || xml.status == 200) {
+                    // alert(xml.responseText);  //echoed data is retured in xml.responseText
+                    handle_result(xml.responseText,type);
+                    
+                }
+
+            }
+
+            myform.append("data_type", "send_file");
+            myform.append("current_chat_user", CURRENT_CHAT_USER);
+            myform.append("file", files[0]);
+
+            xml.open("POST", "send_file.php", true);
+            xml.send(myform);       //$_FILES varibale has file name and data_type,etc. and $_POST variable has form.datatype
+        }
+    }
+
+</script>
